@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0b0f24" />
+    <title>Glow Sort</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="theme-0">
+    <div id="app">
+      <section id="home" class="screen">
+        <header class="topbar">
+          <button class="icon-btn" id="btn-settings" aria-label="Settings"></button>
+          <span class="spacer"></span>
+          <div class="coins"><span class="coin-icon"></span><span class="coin-count">0</span></div>
+        </header>
+        <div class="home-center">
+          <div class="logo-balls" aria-hidden="true">
+            <span class="ball c-a"></span><span class="ball c-c"></span><span class="ball c-d"></span><span class="ball c-e"></span><span class="ball c-g"></span>
+          </div>
+          <h1 class="logo" data-i18n="title">Glow Sort</h1>
+          <p class="tagline" data-i18n="subtitle">Ball Sort Puzzle</p>
+          <button class="big-btn" id="btn-play"><span data-i18n="play">Play</span> <small id="play-level"></small></button>
+          <button class="soft-btn" id="btn-shop"><span class="i-palette"></span><span data-i18n="shop">Themes</span></button>
+        </div>
+      </section>
+
+      <section id="game" class="screen hidden">
+        <header class="topbar">
+          <button class="icon-btn" id="btn-home" aria-label="Home"></button>
+          <span class="level-label"><span data-i18n="level">Level</span> <b id="level-num">1</b></span>
+          <div class="coins"><span class="coin-icon"></span><span class="coin-count">0</span></div>
+        </header>
+        <p id="tutorial" class="tutorial hidden" data-i18n="tapToPlay"></p>
+        <div id="board"></div>
+        <nav class="controls">
+          <button class="ctl" id="btn-undo"><span class="ico i-undo"></span><span class="lbl" data-i18n="undo">Undo</span><span class="badge" id="undo-count">5</span></button>
+          <button class="ctl" id="btn-restart"><span class="ico i-restart"></span><span class="lbl" data-i18n="restart">Restart</span></button>
+          <button class="ctl" id="btn-tube"><span class="ico i-tube"></span><span class="lbl" data-i18n="addTube">+Tube</span><span class="badge ad">AD</span></button>
+          <button class="ctl" id="btn-hint"><span class="ico i-hint"></span><span class="lbl" data-i18n="hint">Hint</span><span class="badge ad">AD</span></button>
+        </nav>
+      </section>
+    </div>
+
+    <div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="card" id="modal-card"></div></div>
+    <div id="toast" class="toast"></div>
+    <div id="fake-banner">Test banner ad</div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

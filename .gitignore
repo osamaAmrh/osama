@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+# Signing secrets must never be committed
+*.jks
+*.keystore
+keystore.properties
