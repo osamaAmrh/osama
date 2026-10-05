@@ -81,7 +81,7 @@ Train your brain, relax after a long day, and enjoy the most soothing way to sor
 |---|---|
 | App category | Game → Puzzle |
 | Tags | Puzzle, Casual, Brain games, Offline |
-| Contact email | (your email) |
+| Contact email | osamaamrh@gmail.com |
 | Website | https://osamaamrh.github.io/osama/ |
 | Privacy policy URL | https://osamaamrh.github.io/osama/privacy.html |
 
