@@ -13,9 +13,9 @@ const TEST_IDS = {
 };
 
 const REAL_IDS = {
-  banner: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
-  interstitial: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
-  rewarded: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
+  banner: 'ca-app-pub-7357503997373423/XXXXXXXXXX',
+  interstitial: 'ca-app-pub-7357503997373423/XXXXXXXXXX',
+  rewarded: 'ca-app-pub-7357503997373423/XXXXXXXXXX',
 };
 
 export const AD_IDS = USE_TEST_ADS ? TEST_IDS : REAL_IDS;

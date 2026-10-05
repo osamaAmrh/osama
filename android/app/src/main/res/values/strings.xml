@@ -4,6 +4,6 @@
     <string name="title_activity_main">Glow Sort</string>
     <string name="package_name">com.osamaamrh.glowsort</string>
     <string name="custom_url_scheme">com.osamaamrh.glowsort</string>
-    <!-- AdMob App ID. This is Google's public TEST id; replace with your own before release. -->
-    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <!-- AdMob App ID (Glow Sort) -->
+    <string name="admob_app_id">ca-app-pub-7357503997373423~3077709539</string>
 </resources>
