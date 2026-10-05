@@ -13,7 +13,7 @@ const TEST_IDS = {
 };
 
 const REAL_IDS = {
-  banner: 'ca-app-pub-7357503997373423/XXXXXXXXXX',
+  banner: 'ca-app-pub-7357503997373423/1853006203',
   interstitial: 'ca-app-pub-7357503997373423/XXXXXXXXXX',
   rewarded: 'ca-app-pub-7357503997373423/XXXXXXXXXX',
 };
