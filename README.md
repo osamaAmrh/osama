@@ -12,7 +12,7 @@ A mobile ball-sort puzzle game for Android, built with HTML5/JavaScript + [Capac
 | `src/levels.json` | 2000 precomputed, verified-solvable levels (`npm run levels`) |
 | `src/main.js` | UI, gameplay, screens, coins, themes, daily gift |
 | `src/ads.js` | AdMob wrapper (consent, banner, interstitial pacing, rewarded) |
-| `src/config.js` | **Ad unit IDs** and pacing – switch `USE_TEST_ADS` off for release |
+| `src/config.js` | **Ad unit IDs** and pacing (test ads when built with `VITE_TEST_ADS=1`) |
 | `android/` | Native Android project (Capacitor) |
 | `assets/` | Icon & splash sources (`node scripts/render-art.cjs`, then `npx capacitor-assets generate --android`) |
 | `store/` | Play Store texts and graphics |
@@ -31,10 +31,8 @@ npm test           # rules + verifies every level is solvable
 Requirements: JDK 21, Android SDK 36.
 
 ```bash
-npm run build && npx cap sync android
-cd android
-./gradlew assembleDebug     # app/build/outputs/apk/debug/app-debug.apk
-./gradlew bundleRelease     # app/build/outputs/bundle/release/app-release.aab
+npm run android:debug     # test ads  → android/app/build/outputs/apk/debug/app-debug.apk
+npm run android:release   # real ads  → android/app/build/outputs/bundle/release/app-release.aab
 ```
 
 Release signing reads `android/keystore.properties` (never committed):
@@ -48,8 +46,6 @@ keyPassword=...
 
 The GitHub Actions workflow builds the same outputs; add repository secrets `KEYSTORE_BASE64` and `KEYSTORE_PASSWORD` to get a signed bundle.
 
-## Going live with real ads
+## Releasing an update
 
-1. `src/config.js`: set the three real ad unit IDs and `USE_TEST_ADS = false`.
-2. `android/app/src/main/res/values/strings.xml`: set `admob_app_id` to the real AdMob App ID.
-3. Bump `versionCode` / `versionName` in `android/app/build.gradle`, rebuild the `.aab`.
+Bump `versionCode` (and `versionName`) in `android/app/build.gradle`, run `npm run android:release`, and upload the `.aab` in Play Console.
