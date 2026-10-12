@@ -468,3 +468,51 @@ body.fake-banner #fake-banner {
   place-items: center;
   font-size: 22px;
 }
+
+/* ---------- Language picker & onboarding ---------- */
+.chip {
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.lang-list { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
+.lang-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-radius: 16px;
+  font-size: 20px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid transparent;
+}
+.lang-row.active { border-color: var(--accent2); background: rgba(255, 255, 255, 0.14); }
+.lang-row .check { color: var(--accent2); font-size: 22px; }
+
+.card h3 { margin: 4px 0 6px; font-size: 20px; }
+.demo { display: flex; align-items: flex-end; justify-content: center; gap: 18px; margin: 10px 0 14px; min-height: 160px; }
+.mini-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.mini-lift { height: 32px; display: grid; place-items: center; }
+.mini-tube {
+  width: 42px;
+  height: 128px;
+  border: 3px solid var(--tube-edge);
+  border-top: 0;
+  border-radius: 0 0 21px 21px;
+  background: var(--tube);
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  padding-bottom: 2px;
+}
+.mini-tube.done { border-color: #fff; box-shadow: 0 0 16px color-mix(in srgb, var(--accent2) 70%, transparent); }
+.demo .ball { position: static; width: 30px; height: 30px; }
+.mini-arrow { align-self: center; font-size: 28px; color: var(--accent2); margin-bottom: 40px; }
+[dir='rtl'] .mini-arrow { transform: scaleX(-1); }
+.dots { display: flex; justify-content: center; gap: 8px; margin: 4px 0 16px; }
+.dots i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); }
+.dots i.on { background: var(--accent2); }

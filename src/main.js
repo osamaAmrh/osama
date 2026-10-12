@@ -14,7 +14,7 @@ import {
 } from './engine.js';
 import LEVELS from './levels.json';
 import * as store from './storage.js';
-import { detectLang, getLang, setLang, t } from './i18n.js';
+import { LANGUAGES, detectLang, getLang, setLang, t } from './i18n.js';
 import { buzz, play } from './audio.js';
 import { initAds, isPrivacyOptionsRequired, maybeInterstitial, showPrivacyOptions, showRewarded } from './ads.js';
 import { PRIVACY_URL } from './config.js';
@@ -453,8 +453,9 @@ function openSettings() {
   openModal(
     `<h2>${t('settings')}</h2>
     ${row('sound', 'sound')}${row('vibration', 'vibration')}${row('colorblind', 'colorblind')}
-    <div class="setting-row"><span>${t('language')}</span>
-      <button class="toggle on" data-act="lang">${getLang() === 'ar' ? 'العربية' : 'English'}</button></div>
+    <div class="setting-row"><span>${t('languageBoth')}</span>
+      <button class="toggle on" data-act="lang">${LANGUAGES.find((l) => l.code === getLang()).name}</button></div>
+    <button class="link-btn" data-act="howto">${t('howTo')}</button>
     <button class="link-btn" data-act="privacy">${t('privacy')}</button>
     ${isPrivacyOptionsRequired() ? `<button class="link-btn" data-act="adprivacy">${t('privacyOptions')}</button>` : ''}
     <div class="btn-row"><button class="btn primary" data-act="close">${t('close')}</button></div>`,
@@ -465,18 +466,79 @@ function openSettings() {
         toggleSetting('colorblind');
         applyTheme();
       },
-      lang: () => {
-        const next = getLang() === 'ar' ? 'en' : 'ar';
-        store.set('lang', next);
-        setLang(next);
-        applyTexts();
-        openSettings();
-      },
+      lang: () => openLanguagePicker(openSettings),
+      howto: () => openHowTo(),
       privacy: () => window.open(PRIVACY_URL, '_blank'),
       adprivacy: showPrivacyOptions,
       close: closeModal,
     },
   );
+}
+
+
+// Lists every language under its own name; picking one never guesses.
+function openLanguagePicker(onDone) {
+  const rows = LANGUAGES.map(
+    (l) => `<button class="lang-row ${l.code === getLang() ? 'active' : ''}" data-act="l-${l.code}">
+      <span>${l.name}</span><span class="check">${l.code === getLang() ? '✓' : ''}</span></button>`,
+  ).join('');
+  const actions = { close: () => (onDone ? onDone() : closeModal()) };
+  LANGUAGES.forEach((l) => {
+    actions[`l-${l.code}`] = () => {
+      store.set('lang', l.code);
+      setLang(l.code);
+      applyTexts();
+      onDone ? onDone() : closeModal();
+    };
+  });
+  openModal(
+    `<h2>${t('languageBoth')}</h2><div class="lang-list">${rows}</div>
+    ${onDone ? `<div class="btn-row"><button class="btn" data-act="close">✕</button></div>` : ''}`,
+    actions,
+  );
+}
+
+const HOWTO_STEPS = [
+  { title: 'step1Title', text: 'step1Text', demo: () => miniCol(['a', 'b'], 'b') + '' },
+  {
+    title: 'step2Title',
+    text: 'step2Text',
+    demo: () => `${miniCol(['a', 'b'], 'b')}<span class="mini-arrow">➜</span>${miniCol(['b', 'b'])}`,
+  },
+  { title: 'step3Title', text: 'step3Text', demo: () => `${miniCol(['a', 'a', 'a', 'a'], '', true)}${miniCol(['d', 'd', 'd', 'd'], '', true)}${miniCol([])}` },
+];
+
+// A small tube drawing; `lifted` is a color shown floating above the tube.
+function miniCol(colors, lifted = '', done = false) {
+  const body = lifted ? colors.slice(0, -1) : colors;
+  const ball = (c) => `<span class="ball c-${c}"></span>`;
+  return `<div class="mini-col"><div class="mini-lift">${lifted ? ball(lifted) : ''}</div>
+    <div class="mini-tube ${done ? 'done' : ''}">${body.map(ball).join('')}</div></div>`;
+}
+
+function openHowTo(step = 0, onFinish) {
+  const last = step === HOWTO_STEPS.length - 1;
+  const st = HOWTO_STEPS[step];
+  const dots = HOWTO_STEPS.map((_, i) => `<i class="${i === step ? 'on' : ''}"></i>`).join('');
+  const finish = () => {
+    closeModal();
+    onFinish?.();
+  };
+  openModal(
+    `<h2>${t('howTo')}</h2><div class="demo">${st.demo()}</div>
+    <h3>${step + 1}. ${t(st.title)}</h3><p>${t(st.text)}</p><div class="dots">${dots}</div>
+    <div class="btn-row">
+      <button class="btn primary" data-act="next">${last ? t('letsPlay') : t('next')}</button>
+      ${last ? '' : `<button class="btn" data-act="skip">${t('skip')}</button>`}
+    </div>`,
+    { next: () => (last ? finish() : openHowTo(step + 1, onFinish)), skip: finish },
+  );
+}
+
+// First launch only: confirm the language, then explain the rules.
+function runOnboarding() {
+  store.set('seenTutorial', true);
+  openLanguagePicker(() => openHowTo(0, () => startLevel(store.get('level'))));
 }
 
 function toggleSetting(key) {
@@ -554,6 +616,7 @@ function bindUI() {
   $('#btn-play').addEventListener('click', () => startLevel(store.get('level')));
   $('#btn-home').addEventListener('click', () => showScreen('home'));
   $('#btn-settings').addEventListener('click', openSettings);
+  $('#btn-lang').addEventListener('click', () => openLanguagePicker(closeModal));
   $('#btn-shop').addEventListener('click', openShop);
   $('#btn-undo').addEventListener('click', undo);
   $('#btn-restart').addEventListener('click', restart);
@@ -588,7 +651,7 @@ function boot() {
   bindUI();
   showScreen('home');
   if (Capacitor.isNativePlatform()) SplashScreen.hide().catch(() => {});
-  initAds().finally(maybeDailyGift);
+  initAds().finally(() => (store.get('seenTutorial') ? maybeDailyGift() : runOnboarding()));
 }
 
 boot();

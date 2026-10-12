@@ -41,6 +41,17 @@ const STRINGS = {
     noHint: 'No solution from here, try undo',
     tapToPlay: 'Tap a tube, then tap where the ball should go',
     watchAd: 'Watch ad',
+    chooseLanguage: 'Choose language',
+    languageBoth: 'Language / اللغة',
+    howTo: 'How to play',
+    skip: 'Skip',
+    letsPlay: "Let's play!",
+    step1Title: 'Pick up a ball',
+    step1Text: 'Tap a tube to lift its top ball.',
+    step2Title: 'Drop it',
+    step2Text: 'Tap another tube to place it there. The tube must be empty, or have the same color on top.',
+    step3Title: 'Sort every color',
+    step3Text: 'Fill each tube with a single color to finish the level. Stuck? Use Undo, Hint or an extra tube.',
     themeNames: ['Midnight', 'Ocean', 'Sunset', 'Forest', 'Candy', 'Galaxy'],
   },
   ar: {
@@ -85,9 +96,27 @@ const STRINGS = {
     noHint: 'لا يوجد حل من هنا، جرّب التراجع',
     tapToPlay: 'اضغط على أنبوب، ثم على المكان الذي تريد نقل الكرة إليه',
     watchAd: 'شاهد إعلان',
+    chooseLanguage: 'اختر اللغة',
+    languageBoth: 'Language / اللغة',
+    howTo: 'طريقة اللعب',
+    skip: 'تخطي',
+    letsPlay: 'هيا نلعب!',
+    step1Title: 'ارفع كرة',
+    step1Text: 'اضغط على أنبوب لرفع الكرة العلوية.',
+    step2Title: 'ضعها في أنبوب آخر',
+    step2Text: 'اضغط على أنبوب آخر لوضعها فيه. يجب أن يكون الأنبوب فارغاً أو أن تكون الكرة العلوية فيه بنفس اللون.',
+    step3Title: 'رتّب كل الألوان',
+    step3Text: 'املأ كل أنبوب بلون واحد لتنهي المرحلة. علقت؟ استخدم التراجع أو التلميح أو أنبوباً إضافياً.',
     themeNames: ['منتصف الليل', 'المحيط', 'الغروب', 'الغابة', 'الحلوى', 'المجرة'],
   },
 };
+
+// Each language is always listed under its own name so players can find it
+// even when the app is currently showing a language they cannot read.
+export const LANGUAGES = [
+  { code: 'en', name: 'English' },
+  { code: 'ar', name: 'العربية' },
+];
 
 let lang = 'en';
 
