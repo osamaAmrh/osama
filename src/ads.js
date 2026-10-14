@@ -148,6 +148,7 @@ export async function maybeInterstitial(level) {
 export async function showRewarded() {
   if (!ready || !canRequest) return false;
   if (!native) {
+    if (window.__noAds) return false; // test hook: simulate "no ad available"
     await fakeAd('Rewarded');
     lastFullscreenAt = Date.now();
     return true;

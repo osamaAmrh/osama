@@ -23,6 +23,8 @@ const $ = (sel) => document.querySelector(sel);
 const FREE_UNDOS = 5;
 const WIN_COINS = 10;
 const DAILY_COINS = 25;
+// Coin price of each ad-gated help, used when no ad can be shown.
+const COST = { undo: 15, tube: 40, hint: 20 };
 const THEMES = [
   { price: 0, bg: ['#0b0f24', '#241a4d'] },
   { price: 100, bg: ['#031a2e', '#0a4a6e'] },
@@ -293,7 +295,7 @@ function undo() {
       G.undos += FREE_UNDOS;
       toast(t('undosAdded'));
       updateControls();
-    });
+    }, COST.undo);
     return;
   }
   G.undos--;
@@ -326,7 +328,7 @@ function addTube() {
     closeModal();
     render();
     toast(t('tubeAdded'));
-  });
+  }, COST.tube);
 }
 
 function showHint(viaAd = true) {
@@ -341,13 +343,34 @@ function showHint(viaAd = true) {
     G.tubeEls[f].classList.add('hint-from');
     G.tubeEls[to].classList.add('hint-to');
   };
-  viaAd ? rewardThen(go) : go();
+  viaAd ? rewardThen(go, COST.hint) : go();
 }
 
-async function rewardThen(fn) {
+// Runs `fn` after a rewarded ad. If no ad can be shown (no fill, offline,
+// ad account not approved yet) and a coin `cost` is given, offers to pay
+// with coins instead so the feature never becomes unusable.
+async function rewardThen(fn, cost = 0) {
   const ok = await showRewarded();
-  if (ok) fn();
-  else toast(t('adUnavailable'));
+  if (ok) return fn();
+  if (!cost) return toast(t('adUnavailable'));
+  if (store.get('coins') < cost) return toast(`${t('adUnavailable')} ${t('notEnough')} (${cost})`);
+  openModal(
+    `<h2>${t('adUnavailableTitle')}</h2>
+    <p>${t('payWithCoins').replace('{n}', cost)}</p>
+    <div class="btn-row">
+      <button class="btn primary" data-act="pay"><span class="coin-icon"></span>${t('useCoins').replace('{n}', cost)}</button>
+      <button class="btn" data-act="no">${t('cancel')}</button>
+    </div>`,
+    {
+      pay: () => {
+        store.addCoins(-cost);
+        refreshCoins();
+        closeModal();
+        fn();
+      },
+      no: closeModal,
+    },
+  );
 }
 
 function confetti() {
@@ -433,7 +456,11 @@ function showScreen(name) {
   if (name === 'home') applyTexts();
 }
 
-function openModal(html, actions = {}) {
+let modalLocked = false;
+
+// `locked` modals ignore taps outside the card (used for first-run onboarding).
+function openModal(html, actions = {}, { locked = false } = {}) {
+  modalLocked = locked;
   const card = $('#modal-card');
   card.innerHTML = html;
   card.querySelectorAll('[data-act]').forEach((btn) => {
@@ -477,12 +504,12 @@ function openSettings() {
 
 
 // Lists every language under its own name; picking one never guesses.
-function openLanguagePicker(onDone) {
+function openLanguagePicker(onDone, locked = false) {
   const rows = LANGUAGES.map(
     (l) => `<button class="lang-row ${l.code === getLang() ? 'active' : ''}" data-act="l-${l.code}">
       <span>${l.name}</span><span class="check">${l.code === getLang() ? '✓' : ''}</span></button>`,
   ).join('');
-  const actions = { close: () => (onDone ? onDone() : closeModal()) };
+  const actions = {};
   LANGUAGES.forEach((l) => {
     actions[`l-${l.code}`] = () => {
       store.set('lang', l.code);
@@ -492,9 +519,9 @@ function openLanguagePicker(onDone) {
     };
   });
   openModal(
-    `<h2>${t('languageBoth')}</h2><div class="lang-list">${rows}</div>
-    ${onDone ? `<div class="btn-row"><button class="btn" data-act="close">✕</button></div>` : ''}`,
+    `<h2>${t('languageBoth')}</h2><div class="lang-list">${rows}</div>`,
     actions,
+    { locked: !!locked },
   );
 }
 
@@ -538,7 +565,7 @@ function openHowTo(step = 0, onFinish) {
 // First launch only: confirm the language, then explain the rules.
 function runOnboarding() {
   store.set('seenTutorial', true);
-  openLanguagePicker(() => openHowTo(0, () => startLevel(store.get('level'))));
+  openLanguagePicker(() => openHowTo(0, () => startLevel(store.get('level'))), true);
 }
 
 function toggleSetting(key) {
@@ -623,7 +650,7 @@ function bindUI() {
   $('#btn-tube').addEventListener('click', addTube);
   $('#btn-hint').addEventListener('click', () => showHint(true));
   $('#modal').addEventListener('click', (e) => {
-    if (e.target.id === 'modal' && !G.won) closeModal();
+    if (e.target.id === 'modal' && !G.won && !modalLocked) closeModal();
   });
   let resizeTimer;
   window.addEventListener('resize', () => {

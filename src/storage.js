@@ -2,7 +2,7 @@ const KEY = 'glowsort.v1';
 
 const DEFAULTS = {
   level: 1,
-  coins: 0,
+  coins: 60,
   sound: true,
   vibration: true,
   colorblind: false,
