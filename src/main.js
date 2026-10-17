@@ -249,16 +249,22 @@ function onTube(i) {
     doMove(s, i);
     return;
   }
-  // Illegal target: switch selection if it has balls, otherwise shake.
-  if (G.board[i].length && !isTubeDone(G.board[i], G.cap)) {
+  // Illegal target. A partly filled tube with a different color on top keeps
+  // the current selection: shake it, play the error sound and explain why.
+  // (Other illegal targets: a full tube takes over the selection unless it is
+  // already finished, in which case it just shakes.)
+  const target = G.board[i];
+  const partlyFilled = target.length > 0 && target.length < G.cap;
+  if (!partlyFilled && target.length && !isTubeDone(target, G.cap)) {
     deselect();
     select(i);
-  } else {
-    play('error');
-    G.tubeEls[i].classList.remove('shake');
-    void G.tubeEls[i].offsetWidth;
-    G.tubeEls[i].classList.add('shake');
+    return;
   }
+  play('error');
+  G.tubeEls[i].classList.remove('shake');
+  void G.tubeEls[i].offsetWidth;
+  G.tubeEls[i].classList.add('shake');
+  if (partlyFilled) toast(t('colorMismatch'));
 }
 
 async function doMove(from, to) {
@@ -531,6 +537,11 @@ const HOWTO_STEPS = [
     title: 'step2Title',
     text: 'step2Text',
     demo: () => `${miniCol(['a', 'b'], 'b')}<span class="mini-arrow">➜</span>${miniCol(['b', 'b'])}`,
+  },
+  {
+    title: 'stepWrongTitle',
+    text: 'stepWrongText',
+    demo: () => `${miniCol(['a', 'b'], 'b')}<span class="mini-arrow">✕</span>${miniCol(['c', 'd'])}`,
   },
   { title: 'step3Title', text: 'step3Text', demo: () => `${miniCol(['a', 'a', 'a', 'a'], '', true)}${miniCol(['d', 'd', 'd', 'd'], '', true)}${miniCol([])}` },
 ];
